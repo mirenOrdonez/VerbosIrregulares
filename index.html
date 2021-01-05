@@ -1,0 +1,454 @@
+<!--MIREN ORDÓÑEZ DE ARCE-->
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Test Verbos Irregulares</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" crossorigin="anonymous">
+        <style>
+            .btnNivel {
+                width: 50px;
+            }
+
+            .marcador {
+                height: 40px;
+            }
+
+            span {
+                margin-right: 5px;
+            }
+
+            .btnganar {
+                width: 350px;
+                height: 600px;
+                margin: 5px;
+            }
+
+            .sepIcon {
+                margin-right: 1px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <!--NIVELES-->
+            <div id="niveles" style="display: block">
+                <div class="row">
+                    <button id="titulo" class="btn btn-block btn-primary disabled">&#x1f1ec;&#x1f1e7; IRREGULAR VERBS
+                        &#x1f1ec;&#x1f1e7;</button>
+                </div>
+                <div class="row">
+                    <button id="eligenivel" class="btn btn-block btn-warning disabled">CHOOSE LEVEL</button>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <button id="10" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">10</button>
+                    </div>
+                    <div class="col">
+                        <button id="20" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">20</button>
+                    </div>
+                    <div class="col">
+                        <button id="30" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">30</button>
+                    </div>
+                    <div class="col">
+                        <button id="50" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">50</button>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <button id="70" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">70</button>
+                    </div>
+                    <div class="col">
+                        <button id="100" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">100</button>
+                    </div>
+                    <div class="col">
+                        <button id="120" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">120</button>
+                    </div>
+                    <div class="col">
+                        <button id="140" class="btn btn-dark btnNivel" onclick="eligeNivel(this.id)">140</button>
+                    </div>
+                </div>
+            </div>
+
+            <!--JUEGO-->
+            <div id="juego" style="display: none">
+                <div class="row">
+                    <button id="titulo" class="btn btn-block btn-primary disabled">&#x1f1ec;&#x1f1e7; IRREGULAR VERBS
+                        &#x1f1ec;&#x1f1e7;</button>
+                </div>
+                <div class="row">
+                    <button id="nivel" class="btn btn-block btn-warning disabled"> </button>
+                </div>
+                <div class="row">
+                    <button id="marcadorPlus" class="btn btn-block btn-primary disabled marcador"></button>
+                </div>
+                <div class="row">
+                    <button id="marcador" class="btn btn-block btn-primary disabled marcador"></button>
+                </div>
+                <br>
+                <div class="row">
+                    <button id="castellano" class="btn btn-block btn-info disabled"></button>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <div id="boton1"></div>
+                    </div>
+                    <div class="col">
+                        <div id="boton2"></div>
+                    </div>
+                    <div class="col">
+                        <div id="boton3"></div>
+                    </div>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+                    <button id="btnresultado" class="btn btn-dark" onclick="comprueba()">CHECK</button>
+                    <span></span>
+                    <button id="btnsiguiente" class="btn btn-dark" onclick="siguiente()">NEXT</button>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+                    <button id="btncambiarNivel" class="btn btn-secondary btn-sm" onclick="cambiarNivel()">Change level</button>
+                </div>
+            </div>
+
+            <!--PARA CUANDO GANAS-->
+            <div id="results" style="display: none">
+                <div class="row justify-content-center">
+                    <button id="btnResults" class="btn btn-success btnganar disabled"><b>YOU WIN</b></button>
+                </div>
+                <div class="row justify-content-center">
+                    <button id="btncambiarNivel" class="btn btn-secondary btn-sm" onclick="cambiarNivel()">Change level</button>
+                    
+                </div>
+            </div>
+        </div>
+
+
+        <script src="js/listaVerbos.js"></script>
+        <script>
+            var tiempoAAdivinar = 0;
+            var verboElegido = 0;
+            var jugando = 0; //Controla si estoy jugando o comprobando
+            var marcador = 0;
+            var marcadorPlus = 0;
+            var nivel = 0;
+            var puntos = 0; //Para controlar los diferentes puntos
+
+            var opcion1 = "";
+            var opcion2 = "";
+
+            var palabra = "";
+
+            var misCookies = "";
+           
+
+            //Elegimos el nivel
+            function eligeNivel(id) {
+                nivel = parseInt(id, 10);
+                document.getElementById('niveles').style = "display:none";
+                document.getElementById('juego').style = "display:block";
+                document.getElementById('nivel').innerHTML = "Level: " + nivel;
+                pintaSegunCookies(leerCookie(nivel));
+                console.log(leerCookie(nivel))
+            }
+            
+
+            function comprueba() {
+                if (jugando == 0) {
+                    
+                    jugando = 1; //Para indicar que estoy chequeando 
+                    //Leemos lo que esté escrito en la caja de texto y lo guardo en una variable
+                    var verboLeido = document.getElementById('caja').value;
+                    document.getElementById('btnresultado').classList.remove('btn-dark');
+                    document.getElementById('btnresultado').classList.remove('btn-success');
+                    document.getElementById('btnresultado').classList.remove('btn-danger');
+                    document.getElementById("btnresultado").disabled = true;
+                    document.getElementById("btnsiguiente").disabled = false;
+
+                    //Si chequeaBarra es true, hay una barra y entonces separa los verbos válidos.
+                    if (chequeaBarra()) {
+                        separaVerbos();
+                        if (opcion1 == verboLeido || opcion2 == verboLeido) {
+                            //Si acierta, pone el botón en verde
+                            document.getElementById('btnresultado').classList.add('btn-success');
+                            document.getElementById('btnresultado').innerText = "BIEN CAMPEÓN";
+                            marcador++;
+                            puntos++;
+                            sumaMarcador();
+                        }else {
+                            //Si falla, se pone el botón en rojo
+                            marcador = 0;
+                            puntos = 0;
+                            console.log(marcador);
+                            document.getElementById('btnresultado').classList.add('btn-danger');
+                            document.getElementById('btnresultado').innerText = verbos[verboElegido][tiempoAAdivinar];
+                            //Ponemos los marcadores a 0
+                            document.getElementById("marcador").innerHTML = "";
+                            document.getElementById("marcadorPlus").innerHTML = "";
+                        }
+
+                    }else{
+                        if (verbos[verboElegido][tiempoAAdivinar] == verboLeido) {
+                            //Si acierta, se pone el botón en verde
+                            document.getElementById('btnresultado').classList.add('btn-success');
+                            document.getElementById('btnresultado').innerText = "BIEN CAMPEÓN";
+                            marcador++;
+                            puntos++;
+                            sumaMarcador();
+
+                        }else {
+                            //Si falla, se pone el botón en rojo
+                            marcador = 0;
+                            puntos = 0;
+                            document.getElementById('btnresultado').classList.add('btn-danger');
+                            document.getElementById('btnresultado').innerText = verbos[verboElegido][tiempoAAdivinar];
+                            //Ponemos los marcadores a 0
+                            document.getElementById("marcador").innerHTML = "";
+                            document.getElementById("marcadorPlus").innerHTML = "";
+                        }
+                    }
+
+                }
+                else {
+                    siguiente();
+                }
+                guardaCookies();
+            }
+
+
+            function eligeVerbo() {
+
+                verboElegido = Math.floor(Math.random() * verbos.length); //Elige verbo al azar de la lista de verbos
+                tiempoAAdivinar = Math.floor(Math.random() * 3); //Elige tiempo verbal al azar para que sea ese el que se oculte 
+                document.getElementById("castellano").innerHTML = verbos[verboElegido][3];
+                console.log(verbos[verboElegido][tiempoAAdivinar]);
+                document.getElementById("btnsiguiente").disabled = true;
+
+                
+                //Según tiempoAAdivinar, uno de los botones quedará vacío
+                if (tiempoAAdivinar == 0) {
+                    document.getElementById("boton1").innerHTML = '<input id="caja" class="form-control">';
+                }
+                else {
+                    document.getElementById("boton1").innerHTML = '<button id="boton1" class="btn btn-block btn-secondary">' + verbos[verboElegido][0] + '</button>';
+                }
+
+                if (tiempoAAdivinar == 1) {
+                    document.getElementById("boton2").innerHTML = '<input id="caja" class="form-control">';
+                }
+                else {
+                    document.getElementById("boton2").innerHTML = '<button id="boton2" class="btn btn-block btn-secondary">' + verbos[verboElegido][1] + '</button>';
+                }
+
+                if (tiempoAAdivinar == 2) {
+                    document.getElementById("boton3").innerHTML = '<input id="caja" class="form-control">';
+                }
+                else {
+                    document.getElementById("boton3").innerHTML = '<button id="boton3" class="btn btn-block btn-secondary">' + verbos[verboElegido][2] + '</button>';
+                }
+
+            }
+            eligeVerbo();
+
+            function siguiente() {
+                document.getElementById("btnresultado").disabled = false;
+                document.getElementById('btnresultado').classList.add('btn-dark');
+                document.getElementById('btnresultado').innerText = "CHECK";
+                document.getElementById("btnsiguiente").disabled = true;
+                jugando = 0;
+                eligeVerbo();
+            }
+
+            //Que aparezca una estrella por cada acierto, en el caso de que falle, se borran todas. 
+            function sumaMarcador() {
+                if (jugando == 1) {
+                    if (puntos == nivel) {
+                        console.log("ganas")
+                        document.getElementById('results').style = "display:block";
+                        document.getElementById('niveles').style = "display:none";
+                        document.getElementById('juego').style = "display:none";
+                    }
+                    if (marcador == 10) {
+                        marcadorPlus++;
+                        //Según el nivel en el que estás, al llegar a 10 aciertos, te cambia el icono
+                        if (nivel == 10) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fab fa-angellist"></i> <span class="sepIcon"></span>');
+                        }
+                        if (nivel == 20) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fab fa-sith"></i> <span class="sepIcon"></span>');
+                        }
+                        if (nivel == 30) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-fire-alt"></i> <span class="sepIcon"></span>');
+                        }
+                        if (nivel == 50) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-meteor"></i> <span class="sepIcon"></span>');
+                        }
+                        if (nivel == 70) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-medal"></i> <span class="sepIcon"></span>');
+                        }
+                        if (nivel == 100) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-award"></i> <span class="sepIcon"></span>');
+                        }
+                        if (nivel == 120) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-trophy"></i> <span class="sepIcon"></span>');
+                        }
+                        if (nivel == 140) {
+                            document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fab fa-sketch"></i> <span class="sepIcon"></span>');
+                        }
+
+                        document.getElementById("marcador").innerHTML = "";
+                        marcador = 0;
+                    }
+                    else {
+                        document.getElementById("marcador").insertAdjacentHTML('beforeend', '<i id="estrella" class="fas fa-star"></i>');
+                    }
+                }
+
+            }
+
+            function cambiarNivel() {
+                document.getElementById('niveles').style = "display:block";
+                document.getElementById('juego').style = "display:none";
+                document.getElementById('results').style = "display:none";
+
+                
+                puntos = 0;
+                marcador = 0;
+                marcadorPlus = 0;
+                document.getElementById("marcador").innerHTML = "";
+                document.getElementById("marcadorPlus").innerHTML = "";
+                siguiente();
+            }
+
+            //Chequea si hay una barra en el verbo a adivinar
+            function chequeaBarra() {
+                palabra = verbos[verboElegido][tiempoAAdivinar];
+
+                for (var i = 0; i < palabra.length; i++) {
+                    if (palabra[i] == "/") {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            //Separa los verbos, en el caso de que haya barra
+            function separaVerbos() {
+                palabra = verbos[verboElegido][tiempoAAdivinar];
+                
+                var i = 0;
+                while (palabra[i] != "/") {
+                    i++;
+                }
+                opcion1 = palabra.slice(0, i);
+                opcion2 = palabra.slice(i + 1, palabra.length);
+            }
+
+
+            function guardaCookies() {
+
+                if (nivel == 10) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+                else if (nivel == 20) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+                else if (nivel == 30) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+                else if (nivel == 50) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+                else if (nivel == 70) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+                else if (nivel == 100) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+                else if (nivel == 120) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+                else if (nivel == 140) {
+                    document.cookie = "Nivel"+nivel+"="+puntos;
+                }
+            }
+
+            function leerCookie(nivel) {
+                var conta = 0;
+                var lista = document.cookie.split(";");
+                for (i in lista) {
+                    var busca = lista[i].search(nivel);
+                    if (busca > -1) {
+                        var micookie=lista[i];
+                        if (nivel < 100) {
+                            break;
+                        }
+                        console.log("entro"+conta)
+                        conta++
+                    }
+                }
+                var igual = micookie.indexOf("=");
+                var valor = micookie.substring(igual+1);
+                return valor;
+            }
+            
+            
+            function pintaSegunCookies(valor) {
+                marcador = valor % 10; //Para que me de el resto
+                marcadorPlus = valor / 10 //Para que me de cuantas de 10 hay
+                puntos = valor; //Guarda en puntos el valor de lo que ya lleve jugando anteriormente
+
+                for (var i =1; i <= marcadorPlus; i++) {
+                    if (marcadorPlus == 0) {
+                        document.getElementById("marcadorPlus").innerHTML = "";
+                    }
+                    else if (nivel == 10) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fab fa-angellist"></i> <span class="sepIcon"></span>');
+                    }
+                    else if (nivel == 20) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fab fa-sith"></i> <span class="sepIcon"></span>');
+                    }
+                    else if (nivel == 30) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-fire-alt"></i> <span class="sepIcon"></span>');
+                    }
+                    else if (nivel == 50) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-meteor"></i> <span class="sepIcon"></span>');
+                    }
+                    else if (nivel == 70) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-medal"></i> <span class="sepIcon"></span>');
+                    }
+                    else if (nivel == 100) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-award"></i> <span class="sepIcon"></span>');
+                    }
+                    else if (nivel == 120) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fas fa-trophy"></i> <span class="sepIcon"></span>');
+                    }
+                    else if (nivel == 140) {
+                        document.getElementById("marcadorPlus").insertAdjacentHTML('beforeend', '<i class="fab fa-sketch"></i> <span class="sepIcon"></span>');
+                    }
+                    else {
+                        document.getElementById("marcadorPlus").innerHTML = "";
+                    }
+                }
+
+                for (var i=1; i <= marcador; i++) {
+                    document.getElementById("marcador").insertAdjacentHTML('beforeend', '<i id="estrella" class="fas fa-star"></i>');
+                }
+            }
+
+
+
+        </script>
+    </body>
+
+</html>
